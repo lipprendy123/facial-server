@@ -1,6 +1,7 @@
 const express = require('express');
 const { serviceController } = require('../controllers/serviceController');
 const {upload, uploadMultiple} = require('../middlewares/upload');
+const authMiddleware = require('../middlewares/auth');
 
 const serviceRoute = express.Router();
 
