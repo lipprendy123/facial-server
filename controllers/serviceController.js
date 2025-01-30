@@ -95,7 +95,7 @@ const serviceController = {
         const data = {
             name: req.body.name,
             description: req.body.description,
-            benefits: benefits, // ✅ Sudah dalam bentuk array
+            benefits: benefits, 
             price: Number(req.body.price),
             duration: Number(req.body.duration),
             image: filePaths[0],

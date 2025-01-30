@@ -17,7 +17,7 @@ const bookingSchema = new mongoose.Schema({
     },
     service: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Service", // Relasi ke serviceSchema
+      ref: "Service", 
       required: true,
     },
     date: {
@@ -25,12 +25,12 @@ const bookingSchema = new mongoose.Schema({
       required: true,
     },
     time: {
-      type: String, // Format waktu (misal: "14:00")
+      type: String, 
       required: true,
     },
     bookingType: {
       type: String,
-      enum: ["home_calling", "visit_to_clinic"], // Tipe booking
+      enum: ["home_calling", "visit_to_clinic"], 
       required: true,
     },
     status: {
@@ -44,8 +44,4 @@ const bookingSchema = new mongoose.Schema({
     },
   });
 
-  const Booking = mongoose.model("Booking", bookingSchema);
-
-  module.exports = {
-    Booking
-  }
+  module.exports = mongoose.model("Booking", bookingSchema);
