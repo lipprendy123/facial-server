@@ -23,6 +23,30 @@ const serviceController = {
             })
         }
     },
+
+    async getServiceById(req, res) {
+        try {
+            const {id} = req.params;
+
+            const service = await Service.findById(id).populate({path: 'benefits'});
+
+            if (!service) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Service not found'
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Get data service by id success',
+                data: service
+            })
+        } catch (error) {
+            console.error(error); 
+            res.status(500).json({ message: "Server error" });
+        }
+    },
         
     async createService(req, res) {
       try {
@@ -50,7 +74,7 @@ const serviceController = {
               description,
               price: Number(price),
               duration: Number(duration),
-              image: filePaths[0],
+              image: filePaths,
               benefits: benefitsArray, // Simpan ID benefit dalam array
           };
   
@@ -98,7 +122,7 @@ const serviceController = {
             benefits: benefits, 
             price: Number(req.body.price),
             duration: Number(req.body.duration),
-            image: filePaths[0],
+            image: filePaths,
         };
 
         const service = await Service.findOneAndUpdate(

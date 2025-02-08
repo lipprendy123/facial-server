@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema({
+    user: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User",
+      required: true 
+    },
     clientName: {
       type: String,
       required: true,
@@ -35,7 +40,7 @@ const bookingSchema = new mongoose.Schema({
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "completed", "cancelled"], // Status booking
+      enum: ["pending", "confirmed", "completed", "cancelled"], 
       default: "pending",
     },
     createdAt: {

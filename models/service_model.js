@@ -9,7 +9,7 @@ const serviceSchema = new mongoose.Schema({
   }],
   price: { type: Number, required: true },
   duration: { type: Number, required: true },
-  image: { type: String, required: true }, // Nama file image
+  image: [{type: String, required: true}], // Nama file image
 });
 
 module.exports = mongoose.model("Service", serviceSchema);

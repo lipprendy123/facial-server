@@ -50,52 +50,45 @@ const authController = {
 
 
     async login(req, res) {
-        const {email, password} = req.body;
-
+        const { email, password } = req.body;
+    
         if (!email || !password) {
-            return res.json({
-                success: false,
-                message: 'User and password is required'
-            })
+            return res.status(400).json({ success: false, message: "Email dan password wajib diisi" });
         }
-
+    
         try {
-            const user = await User.findOne({email});
-
+            const user = await User.findOne({ email });
+    
             if (!user) {
-                return res.json({
-                    success: false,
-                    message: 'Invalid Email'
-                });
+                return res.status(401).json({ success: false, message: "Email tidak ditemukan" });
             }
-
+    
             const isMatch = await bcrypt.compare(password, user.password);
-
             if (!isMatch) {
-                return res.json({
-                    success: false,
-                    message: 'Invalid Password'
-                });
+                return res.status(401).json({ success: false, message: "Password salah" });
             }
-
-            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
-
-            res.cookie('token', token, {
+    
+            const token = jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    
+            res.cookie("token", token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-                maxAge: 7 * 24 * 60 * 60 * 1000
+                secure: process.env.NODE_ENV === "production",
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
             });
-
-            return res.json({success: true});
-
+    
+            return res.json({
+                success: true,
+                token,
+                message: "Login berhasil",
+                user: { id: user._id, username: user.username, email: user.email }
+            });
         } catch (error) {
-             res.json({
-                success: false,
-                message: error.message
-            })
+            console.error(error);
+            return res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
         }
     },
+    
 
     async logout(req, res) {
         try {
