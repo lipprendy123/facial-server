@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDb = require('./config/db');
 require('dotenv').config();
+const cookieParser = require("cookie-parser");
 const serviceRoute = require('./routes/serviceRoute');
 const authRoute = require('./routes/authRoute');
 const benefitRoute = require('./routes/benefitRoute');
@@ -11,6 +12,7 @@ const port = 4000;
 const app = express();
 
 app.use(cors());
+app.use(cookieParser());
 app.use('/public', express.static('public'));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());

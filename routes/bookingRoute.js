@@ -5,9 +5,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const bookingRoute = express.Router();
 
 bookingRoute.get('/bookings', bookingController.getBooking);
-bookingRoute.get('/history/booking', authMiddleware , bookingController.getUserBookings);
+bookingRoute.get('/history/booking', authMiddleware, bookingController.getUserBookings);
 bookingRoute.post('/bookings', authMiddleware ,bookingController.createBooking);
-bookingRoute.put('/bookings/:id', );
-bookingRoute.delete('/bookings/:id', );
+bookingRoute.put('/bookings/:id', bookingController.updateBooking);
+bookingRoute.delete('/bookings/:id', bookingController.deleteBooking );
 
 module.exports = bookingRoute;

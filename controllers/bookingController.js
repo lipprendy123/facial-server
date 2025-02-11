@@ -49,7 +49,7 @@ const bookingController = {
     
     async createBooking(req, res) {
         try {
-            const { clientName, clientEmail, clientPhone, service, date, type, time, bookingType } = req.body;
+            const { clientName, clientEmail, clientPhone, service, date, type, time, bookingType, address } = req.body;
             const userId = req.user ? req.user._id : null;
     
             // Cek tipe booking valid
@@ -79,6 +79,7 @@ const bookingController = {
                 date: bookingDate,  // Konversi string ke Date
                 time,
                 bookingType,
+                address,
                 user: userId,
             });
     
@@ -95,8 +96,66 @@ const bookingController = {
             return res.status(500).json({ success: false, message: 'Error creating booking' });
         }
     },
-    
 
+    async updateBooking(req, res) {
+        try {
+            const { bookingType, address, status } = req.body;
+        
+            // Validasi: Jika bookingType adalah "home_calling", alamat harus diisi
+            if (bookingType === "home_calling" && !address) {
+              return res.status(400).json({ message: "Address is required for home calling" });
+            }
+        
+            // Validasi: Status hanya boleh salah satu dari "pending", "confirmed", "cancelled"
+            const allowedStatus = ["pending", "confirmed", "cancelled"];
+            if (status && !allowedStatus.includes(status)) {
+              return res.status(400).json({ message: "Invalid status" });
+            }
+        
+            // Update data booking berdasarkan ID
+            const updatedBooking = await Booking.findByIdAndUpdate(
+              req.params.id,
+              { $set: req.body }, // Update hanya data yang dikirim
+              { new: true, runValidators: true } // Mengembalikan data terbaru & menjalankan validasi
+            );
+        
+            if (!updatedBooking) {
+              return res.status(404).json({ message: "Booking not found" });
+            }
+        
+            res.json(updatedBooking);
+          } catch (error) {
+            res.status(500).json({ message: error.message });
+          }
+    },
+    
+    async deleteBooking(req, res) {
+        try {
+            const {id} = req.params;
+
+            const booking = await Booking.findByIdAndDelete({_id: id});
+
+            if (!booking) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Booking not found'
+                })
+            }
+
+            res.status(200).json({
+                success: true,
+                message: 'Delete data booking success!!'
+            })
+
+        } catch (error) {
+            console.error("Error: ", error.message);
+            return res.status(500).json({
+                success: false,
+                message: 'Delete data failed',
+                error: error.message
+            })
+        }
+    }
      
 }
 

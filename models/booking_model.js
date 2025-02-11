@@ -38,9 +38,15 @@ const bookingSchema = new mongoose.Schema({
       enum: ["home_calling", "visit_to_clinic"], 
       required: true,
     },
-    status: {
+    address: {
       type: String,
-      enum: ["pending", "confirmed", "completed", "cancelled"], 
+      required: function () {
+        return this.type === "home_calling"; // Alamat wajib jika type home calling
+      },
+    },
+    status: { 
+      type: String,
+      enum: ["pending", "confirmed", "cancelled"], 
       default: "pending",
     },
     createdAt: {

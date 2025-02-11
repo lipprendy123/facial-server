@@ -1,25 +1,39 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user_model'); // Pastikan model User di-import
+const jwt = require("jsonwebtoken");
+const User = require("../models/user_model");
 
 const authMiddleware = async (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-
-    if (!token) {
-        return res.status(401).json({ message: 'Token tidak ditemukan' });
-    }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id).select("-password"); // Ambil user tanpa password
+        const authHeader = req.header("Authorization");
 
-        if (!user) {
-            return res.status(401).json({ message: 'User tidak ditemukan' });
+        // Pastikan header Authorization ada dan dimulai dengan "Bearer "
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ success: false, message: "Token tidak ditemukan atau format salah" });
         }
 
-        req.user = user; // Simpan user di req.user tanpa menimpa dengan decoded
+        const token = authHeader.split(" ")[1]; // Ambil token setelah "Bearer "
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifikasi token
+        
+        // Cari user berdasarkan ID dari token
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User tidak ditemukan" });
+        }
+
+        req.user = user; // Simpan user di req.user agar bisa digunakan di route berikutnya
         next();
     } catch (error) {
-        return res.status(401).json({ message: 'Token tidak valid' });
+        console.error("Auth Middleware Error:", error);
+
+        // Tangani error JWT spesifik
+        if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ success: false, message: "Token sudah kadaluarsa" });
+        }
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ success: false, message: "Token tidak valid" });
+        }
+
+        return res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
     }
 };
 
