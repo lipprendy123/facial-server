@@ -51,7 +51,6 @@ const bookingController = {
         try {
             const { clientName, clientEmail, clientPhone, service, date, type, time, bookingType, address } = req.body;
             const userId = req.user ? req.user._id : null;
-    
             // Cek tipe booking valid
             const allowedBookingTypes = ['home_calling', 'visit_to_clinic'];
             if (!allowedBookingTypes.includes(bookingType)) {

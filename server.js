@@ -18,7 +18,7 @@ app.use('/public', express.static('public'));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-connectDb();
+connectDb(); 
 
 app.use('/api', serviceRoute);
 app.use('/api/auth', authRoute);
