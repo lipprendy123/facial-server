@@ -36,7 +36,7 @@ async function createTransaction(req, res) {
                 phone: payment.customer_details.phone
             },
             callbacks: {
-                finish: `${process.env.FRONTEND_URL}/success`, // Redirect ke halaman history booking
+                finish: `${process.env.FRONTEND_URL}/success`, // Redirect ke halaman success
                 error: `${process.env.FRONTEND_URL}/booking-history`, // Redirect ke halaman yang sama untuk error
                 pending: `${process.env.FRONTEND_URL}/booking-history` // Redirect ke halaman yang sama untuk pending
             }
