@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 const authController = {
     // Register user baru
     async register(req, res) {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, handphone, role } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !handphone) {
             return res.status(400).json({
                 success: false,
                 message: 'Missing details'
@@ -28,7 +28,7 @@ const authController = {
             const hashedPassword = await bcrypt.hash(password, 10);
 
             // Buat user baru dengan field role (default adalah "user" jika tidak diberikan)
-            const user = new User({ name, email, password: hashedPassword, role: role || 'user' });
+            const user = new User({ name, email, handphone, password: hashedPassword, role: role || 'user' });
             await user.save();
 
             // Generate JWT token untuk authentication
