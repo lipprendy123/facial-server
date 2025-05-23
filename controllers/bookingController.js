@@ -24,7 +24,7 @@ const bookingController = {
         try {
             console.log("User ID from request:", req.user ? req.user._id : "No user found"); // Debugging
     
-            const userId = req.user._id;
+            const userId = req.user._id; 
             const bookings = await Booking.find({ user: userId }).populate('service', 'name price description').sort({ date: -1 });
     
             if (!bookings.length) {
@@ -67,6 +67,24 @@ const bookingController = {
             const bookingDate = new Date(date);
             if (bookingDate < new Date()) {
                 return res.status(400).json({ success: false, message: 'Invalid date: Cannot book in the past' });
+            }
+
+            
+            const startOfDay = new Date(bookingDate.setHours(0, 0, 0, 0))
+            const endOfDay = new Date(bookingDate.setHours(23, 59, 59, 99))
+
+            const countBookingToday = await Booking.countDocuments({
+                date: {
+                    $gte: startOfDay,
+                    $lte: endOfDay
+                }
+            })
+
+            if (countBookingToday >= 2) {
+                return res.json({
+                    success: false,
+                    message: 'Booking pada hari ini telah penuh, silahkan pilih hari lain'
+                })
             }
     
             // Buat booking baru
