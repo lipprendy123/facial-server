@@ -8,10 +8,19 @@ const serviceController = {
         try {
             const service = await Service.find().populate({ path: 'benefits'});
 
+            const imageUrl = process.env.APP_URL + '/public/images/'
+
+            const response = service.map((item) => {
+                return {
+                    ...item.toObject(),
+                    thumbnail_url: item.image.length > 0 ? imageUrl + item.image[0] : null
+                }
+            })
+
             return res.json({
                 success: true,
                 message: 'Get data services successfully',
-                data: service
+                data: response
             });
 
         } catch (error) {
