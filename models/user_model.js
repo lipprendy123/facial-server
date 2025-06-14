@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -26,32 +25,31 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: [
-      "admin",
-      "user"
-    ],
-    default: 'user'
+    enum: ["admin", "user"],
+    default: "user",
   },
   verifyOtp: {
     type: String,
-    default: ''
+    default: "",
   },
   verifyOtpExpireAt: {
     type: Number,
-    default: 0
+    default: 0,
   },
   isAccountVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   resetOtp: {
     type: String,
-    default: ''
+    default: "",
   },
   resetOtpExpireAt: {
     type: Number,
-    default: ''
+    default: "",
   },
+  verifyToken: { type: String },
+  verified: { type: Boolean, default: false },
   createdAt: {
     type: Date,
     default: Date.now,
